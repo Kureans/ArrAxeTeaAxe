@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-<id>
+<head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="styles.css">
-  <script src="/socket.io/socket.io.js"></script>
-  <script defer src="/main.js"></script>
+  <script defer src="../../../socket.io/socket.io.js"></script>
+  <script defer type="module" src="../../scripts/main-client-script.js"></script>
   <title>Leaderboard</title>
 </head>
 
-<body class="bgRed">
+<body class="noticeboard">
     <div class="bigcontainer">       
         <header id="header">
             <%- include('../partials/header') %>
         </header>
 
-        <div class="notasbigcontainer bgGreen smallifycont">
+        <div class="notasbigcontainer bgWhite smallifycont">
 
         <section id="leaderboard" class="pad5percent">
-            <h1 class="leader-text" style="font-size: 36px;">LEADERBOARDS</h1>   
+            <h1 class="headings" style="font-size: 36px;">LEADERBOARDS</h1>   
             <ol>
                 <% for (let i = 0; i < entries.length; i++) { %>
-                    <li class="textshdw" style="font-size: 20px; color: whitesmoke"><%= i+1 %>.  <%= entries[i].name %> - <%= entries[i].score %> </li>
+                    <li style="font-size: 20px; font-family: 'Calibri';"><%= i+1 %>.  <%= entries[i].name %> - <%= entries[i].score %> </li>
                 <% } %>
             </ol>                       
         </section>

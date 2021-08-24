@@ -2,72 +2,177 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/semantic.min.css"/>
     <script defer src="../../../socket.io/socket.io.js"></script>
-    <script defer type="module" src="../../scripts/main-client-script.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+    <script defer type="module" src="../../scripts/main-client-script.js"></script>  
     <title>Remote Playground</title>
 </head>
 
 <body>
+    <audio id="btnsound">
+        <source src="../../images/rollover1.ogg" type="audio/ogg">
+    </audio>
+    <audio id="led0_sound"> <source src="../../images/led0.ogg" type="audio/ogg"> </audio>
+    <audio id="led1_sound"> <source src="../../images/led1.ogg" type="audio/ogg"> </audio>
+    <audio id="led2_sound"> <source src="../../images/led2.ogg" type="audio/ogg"> </audio>
+    <audio id="led3_sound"> <source src="../../images/led3.ogg" type="audio/ogg"> </audio>
+
+    <audio id="blingsound">
+        <source src="../../images/bling.mp3" type="audio/mp3">
+    </audio>
+
+    <audio loop id="bgmusic">
+        <source src="../../images/elevatormusic.mp3" type="audio/mp3">
+    </audio>
 
         <header id="header">
             <%- include('../partials/header') %>
         </header>
-    <div class="big-container">
+    <div id="big-container" class="big-container1">
 
     <div class="queue-container">
-        <div class="queue-box bgGreen"><p id="box1"></p></div>
-        <div class="queue-box bgOrange "><p id="box2"></p></div>
-        <div class="queue-box bgOrange"><p id="box3"></p></div>
-        <div class="queue-box bgOrange"><p id="box4"></p></div>
-        <div class="queue-box bgOrange"><p id="box5"></p></div>
+        <div class="queue-box bgOrange"><p class="textshdw white" style="font-size: 22px;" id="box1"></p></div>
+        <div class="queue-box bgDarkBlue"><p class="textshdw white" style="font-size: 22px;" id="box2"></p></div>
+        <div class="queue-box bgDarkBlue"><p class="textshdw white" style="font-size: 22px;" id="box3"></p></div>
+        <div class="queue-box bgDarkBlue"><p class="textshdw white" style="font-size: 22px;"id="box4"></p></div>
+        <div class="queue-box bgDarkBlue"><p class="textshdw white" style="font-size: 22px;" id="box5"></p></div>
         <div class="queue-info">
-            <p id="queuetext" class="leader-text" style="text-decoration: none; font-size: 18px;"><b>Queue Number: Not in Queue</b></p>
+            <p id="queuetext" class="leader-text textshdw white" style="font-size: 18px;"></p>
             <input id="queuebutton" type="button" class="button red textshdw" value="QUEUE UP"> 
             <input id="exitbutton" type="button" class="button grey textshdw" style="border-radius: 50%; padding: 15px 15px" value="X">
-        </div>
-        
+            <!-- <input id="testbutton" type="button" class="button red" value="notif"> -->
+        </div>      
     </div>
 
-    <div class="statuses-container">
+    <div id="stat" class="statuses-container">
         <div id="leader-box"> 
-            <p class="leader-text"><b>LEADERBOARDS</b></p>    
-            <p class="leader-text" style="text-decoration: none;">1.<%= entries[0].name %> - <%=  entries[0].score %></p>        
-            <p class="leader-text" style="text-decoration: none;">2.<%= entries[1].name %> - <%=  entries[1].score %></p>  
-            <p class="leader-text" style="text-decoration: none;">3.<%= entries[2].name %> - <%=  entries[2].score %></p>  
-        </div>
+            <p class="leader-text textshdw white" style="text-decoration: underline;"><b>LEADERBOARDS</b></p>    
+            <p class="leader-text textshdw white">1.<%= entries[0].name %> - <%=  entries[0].score %></p>        
+            <p class="leader-text textshdw white">2.<%= entries[1].name %> - <%=  entries[1].score %></p>  
+            <p class="leader-text textshdw white">3.<%= entries[2].name %> - <%=  entries[2].score %></p>  
+        </div>        
     </div>        
 
     <div class="playground-container">
         <!-- <div class="play-box"><img id="videoStream" src="../../images/maintenance_notxt.png" height=400px width=400px></div> -->
-        <!-- Comment if no RPI -->
-        <div id="play-box"><img id="videoStream" src="/stream.mjpg"></div> 
-    </div>
-    
+        <!-- Comment if no RPI CSS has the src btw -->
+        <div class="play-box"><img id="videoStream" ></div> 
 
-    <div class="play-buttons">                  
-        <input id="simon-startquit" type="button" class="button red leds" value="Start">
+
+        <div class="idle-box ">
+            <div><h1 id="ticket-count" class="textshdw white">Tickets: 0</h1></div>
+            <h2 id="multiplier" class="textshdw white">Simon Says Multiplier: x1</h2>
+
+            
+            <!-- <input id="expand" type="button" value="EXPAND" class="button green textshdw"> -->
+            <input id="cashout" type="button" value="CASH OUT" class="button green textshdw">
+         
+            
+
+            <div class="idlebtn-container tooltip">
+                <span class="tooltiptext" id="idletooltip">Please login to play</span>
+
+                <div class="hopscotch resource">
+                    <div class="icon">                   
+                        <input id="idlebutton1" type="image" src="../../images/hopscotch.png" height=100px width=100px>   
+                    </div>                                
+                    <div class="containerbar">
+                        <p style="font-size: 14px;"><u id="income1">0</u> TICKETS/HOP</p>
+                        <div class="progbar-container"><div id="bar1" class="progbar"></div></div>                     
+                    </div>
+                    <div class="resource-count">
+                        <h1 id="res-display-1">0</h1>
+                    </div>
+                    <div class="containerinfo">     
+                        <p style="font-size: 14px; text-align: center; color: whitesmoke;">NEXT: <u id="cost1">0</u> Tickets</p>                                       
+                        <input id="addbutton1" type="button" value="+" class="button red textshdw">                        
+                    </div>
+                </div>
+
+                <div class="swing resource">
+                    <div class="icon">                   
+                        <input id="idlebutton2" type="image" src="../../images/swing.png" height=100px width=100px>   
+                    </div>                                
+                    <div class="containerbar">
+                        <p style="font-size: 14px;"><u id="income2">0</u> TICKETS/SWING</p>
+                        <div class="progbar-container"><div id="bar2" class="progbar"></div></div>                     
+                    </div>
+                    <div class="resource-count">
+                        <h1 id="res-display-2">0</h1>
+                    </div>
+                    <div class="containerinfo">     
+                        <p style="font-size: 14px; text-align: center; color: whitesmoke;">NEXT: <u id="cost2">60</u> Tickets</p>                                       
+                        <input id="addbutton2" type="button" value="+" class="button red textshdw">                   
+                    </div>
+                </div>
+
+                <div class="slide resource">
+                    <div class="icon">                   
+                        <input id="idlebutton3" type="image" src="../../images/slide.png" height=100px width=100px>   
+                    </div>                                
+                    <div class="containerbar">
+                        <p style="font-size: 14px;"><u id="income3">0</u> TICKETS/SLIDE</p>
+                        <div class="progbar-container"><div id="bar3" class="progbar"></div></div>                     
+                    </div>
+                    <div class="resource-count">
+                        <h1 id="res-display-3">0</h1>
+                    </div>
+                    <div class="containerinfo">     
+                        <p style="font-size: 14px; text-align: center; color: whitesmoke;">NEXT: <u id="cost3">8640</u> Tickets</p>                                       
+                        <input id="addbutton3" type="button" value="+" class="button red textshdw"> 
+                    </div>
+                </div>
+
+                <div class="achievements">
+                    
+                    <div id="achievements" style="display: none;"><% if (auth) { %> <%= JSON.stringify(isAchieve[0]) %> <% } %></div>
+                    
+                    
+                </div>
+
+            </div>
+
+        </div>
+        <input id="collapsecol" type="button" class="smallbtn" value=">" style="background-color: dimgrey;">
+    </div>
+
+    <script defer type="text/javascript">
+        
+    </script>
+        
+    <div class="play-buttons tooltip">                  
+        <span class="tooltiptext">Press "Q", "W", "E", "R" to control LEDs</span>
+
         <input id="gpio0" type="button" class="btn-3d red leds"> 
         <input id="gpio1" type="button" class="btn-3d green leds">
         <input id="gpio2" type="button" class="btn-3d blue leds">
         <input id="gpio3" type="button" class="btn-3d yellow leds">               
 
-        <p id="curr_score"><b>Score: 0 </b></p>
+        <p id="curr_score" style="white-space: pre-line;"><b>Multiplier: x1  </b></p>
+        <p id="playground-status-header" style="white-space: pre-wrap;"><b>Public Playground</b></p>
+
+        <input id="PubSimon" type="button" value="Switch Camera" class="button purple">
+
     </div>        
 
-    <div class="chat-container">
+
+    <div id="cht" class="chat-container">
          <div id="chat-text-box">
             <div id="text-box">
                 <ul>
                 </ul>
             </div>
             <div id="chat-input-con">
-            <input id="chat-input" type="text" placeholder="Type to Chat">
+            <input id="chat-input" class="inputs" type="text" placeholder="Type to Chat">
             <input id="chatbutton" type="button" class="button red" value="Send">
             </div>
         </div>
     </div>
-
     </div>
 </body>
 </html>

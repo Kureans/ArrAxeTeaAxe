@@ -1,15 +1,17 @@
-/* Future add ons: timing difficulty levels
-//  */
-
 const Gpio = require('onoff').Gpio; //Gpio class
 
 //initialize GPIO pins
- const LED_0 = new Gpio(17, 'out'),
-       LED_1 = new Gpio(22, 'out'),
-       LED_2 = new Gpio(26, 'out'),
-       LED_3 = new Gpio(12, 'out');
+const  LED_4 = new Gpio(26, 'out'),   //simon says LEDS
+       LED_5 = new Gpio(22, 'out'),
+       LED_6 = new Gpio(27, 'out'),
+       LED_7 = new Gpio(19, 'out'),
 
- const leds_list = [LED_0, LED_1, LED_2, LED_3];
+       LED_0 = new Gpio(14, 'out'),  //Public playground LEDs
+       LED_1 = new Gpio(16, 'out'),
+       LED_2 = new Gpio(20, 'out'),
+       LED_3 = new Gpio(21, 'out');
+
+ const leds_list = [LED_0, LED_1, LED_2, LED_3, LED_4, LED_5, LED_6, LED_7];
 
  var simon_info = { index: 0 , hist: []}; //to be exported to other modules
 
@@ -38,14 +40,14 @@ const Gpio = require('onoff').Gpio; //Gpio class
 
  //on LED for 1s, off for 1s
  async function blink(curr_LED) {
-     await sleep(200); //sleep only within function, code outside fn will still run normally
+     await sleep(500); //sleep only within function, code outside fn will still run normally
      LED_ctl(curr_LED, 1);
-     await sleep(200);
+     await sleep(500);
      LED_ctl(curr_LED, 0);
  };
 
  async function blinks() {
-     let random_led = Math.floor(Math.random() * 4); //random number from 0-3 (incl)
+     let random_led = Math.floor(Math.random() * 4) + 4; //random number from 0-3 (incl)
      simon_info.hist.push(random_led);
      console.log(simon_info.hist);
 
@@ -65,7 +67,8 @@ const Gpio = require('onoff').Gpio; //Gpio class
 
 
  module.exports = { 
-     LED_1, LED_2, LED_3, LED_0,
+     LED_0, LED_1, LED_2, LED_3,
+     LED_4, LED_5, LED_6, LED_7,
      LED_ctl,
      blink,
      fast_blink,
@@ -73,18 +76,11 @@ const Gpio = require('onoff').Gpio; //Gpio class
      sleep,
      simon_blinks,
 
-
      hist_reset,
      index_reset,
      index_add,
 
-     simon_info
+     simon_info,
+     sleep,
  }; 
-
-
- // do this when no one online / never invoke the led 
- function endBlink(LED) { //function to stop blinking
-     LED_ctl(LED, 0); // Turn LED off
-     LED.unexport(); // Unexport GPIO to free resources
- };
 
